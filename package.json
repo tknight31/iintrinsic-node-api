@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "express": "^4.15.4",
+    "mongo-hacker": "^0.0.15",
+    "mongodb": "^2.2.31",
+    "socket.io": "^2.0.3"
+  }
+}
