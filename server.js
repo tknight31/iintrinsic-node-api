@@ -1,6 +1,6 @@
 const io = require('socket.io')()
 const mongo = require('mongodb').MongoClient
-const MONGODB_URI = process.env.MONGODB_URI
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/myDatabase'
 
 let chatName = ''
 
@@ -8,6 +8,7 @@ let chatName = ''
 io.on('connection', socket => {
 
   console.log('a user connected')
+  console.log('the url apparently', MONGODB_URI);
 
   socket.on('create', (user, currentUser) => {
     if(user === null || currentUser === null){
@@ -52,7 +53,9 @@ io.on('connection', socket => {
   })
 
 socket.on('chat', (usr, msg, date, chatRoom) => {
+    console.log("here", usr, msg, date, chatRoom)
     mongo.connect(MONGODB_URI, (err, db) => {
+      console.log("connecting to DB...")
       let collection = db.collection(chatRoom)
       collection.insert({user: usr, content: msg, date: date}, (err, o) => {
         if(err){
@@ -66,8 +69,6 @@ socket.on('chat', (usr, msg, date, chatRoom) => {
     console.log('emitting message', msg, 'from user', usr, 'in room', chatRoom)
     io.to(chatRoom).emit('chat', {room: chatRoom, user: usr, content: msg})
     })
-
-
 
 })
 
